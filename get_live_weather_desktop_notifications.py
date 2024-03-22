@@ -15,10 +15,14 @@ htmldata = getdata("https://weather.com/en-US/weather/today/l/37.06,37.38?par=go
 soup = BeautifulSoup(htmldata, 'html.parser')
 
 get_weather = soup.find("section", {"data-testid": "HourlyWeatherModule"})
-temp = get_weather.find("span", {"data-testid": "TemperatureValue"}).text
+temp_as_fahrenheit = get_weather.find("span", {"data-testid": "TemperatureValue"}).text
 chance_rain = get_weather.find("div", {"data-testid": "SegmentPrecipPercentage"}).find(
     "span", class_="Column--precip--3JCDO").text.split("in",)[1]
 
-result = "The temperature {} in Gaziantep".format(temp) + "\n" + "{} chance of rain".format(chance_rain)
+temp_as_celsius = (float(temp_as_fahrenheit.split("°")[0]) - 32) * 5/9
+
+
+result = ("The temperature {}° in Gaziantep".format(int(temp_as_celsius)) + "\n" + "{} chance of rain"
+          .format(chance_rain))
 print(result)
 notifier.show_toast("Weather update", result, duration=10)
